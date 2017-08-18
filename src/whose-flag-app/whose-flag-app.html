@@ -100,7 +100,7 @@
             type: Object
           }, 
           userAnswer: {
-            type: Object
+            type: String
           },
           countryList: {
             type: Object
@@ -110,11 +110,11 @@
       _selectAnswer(event) {
         let clickedButton = event.target;
         this.userAnswer = clickedButton.textContent;
-        if (this.userAnswer == this.correctAnswer) {
+        if (this.userAnswer == this.correctAnswer.name) {
           this.outputMessage = `${this.userAnswer} is correct!`;
         }
         else {
-          this.outputMessage = `Nope! The correct answer is ${this.correctAnswer} !`;
+          this.outputMessage = `Nope! The correct answer is ${this.correctAnswer.name} !`;
         }
       }
       _handleResponse(event) {
