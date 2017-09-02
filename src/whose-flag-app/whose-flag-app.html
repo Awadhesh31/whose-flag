@@ -4,6 +4,7 @@
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../../bower_components/paper-styles/color.html">
 <link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../../bower_components/iron-input/iron-input.html">
 
 <dom-module id="whose-flag-app">
   <template>
@@ -50,9 +51,20 @@
         flex-flow: row wrap;
         justify-content:space-around;
       }
+      .iron-input-container {
+        display: flex; /* or inline-flex */
+        flex-flow: column wrap;
+        justify-content:space-around;
+      }
+      input {
+        width: 100%;
+        padding: 12px 20px;
+        margin: 8px 0;
+        box-sizing: border-box;
+      }
     </style>
 
-    <app-header>
+  <app-header>
     <app-toolbar>
       <div main-title>Whose flag is this?</div>
     </app-toolbar>
@@ -68,9 +80,13 @@
       id="flag-image"
       preload fade src="data/svg/[[correctAnswer.code]].svg">
     </iron-image>
-    <div id="answer-button-container">
-      <paper-button id="optionA" class="answer" on-click="_selectAnswer">[[countryA.name]]</paper-button>
-      <paper-button id="optionB" class="answer" on-click="_selectAnswer">[[countryB.name]]</paper-button>
+    <div class="iron-input-container">
+      <iron-input bind-value="{{userAnswer}}">
+        <input is="iron-input">
+      </iron-input>
+      <paper-button id="checkAnswer" class="answer" on-click="_checkAnswer">
+        Check my answer!
+      </paper-button>
     </div>
     <p>[[outputMessage]]</p>
     <paper-button class="another" id="another" on-click="_restart">Another!</paper-button>
@@ -107,9 +123,7 @@
           }
         };
       }
-      _selectAnswer(event) {
-        let clickedButton = event.target;
-        this.userAnswer = clickedButton.textContent;
+      _checkAnswer() {
         if (this.userAnswer == this.correctAnswer.name) {
           this.outputMessage = `${this.userAnswer} is correct!`;
         }
@@ -119,17 +133,13 @@
       }
       _handleResponse(event) {
         this.countryList = event.detail.response.countrycodes;
-        while (!this.countryA || !this.countryB || (this.countryA.code == this.countryB.code)){
-          this.countryA = this.countryList[this.__getRandomCountry()];
-          this.countryB = this.countryList[this.__getRandomCountry()];
-        }
-        this.correctAnswer = this.countryA;
-        let coin = (Math.floor(Math.random() * 2));
-        this.correctAnswer = coin == 1 ? this.countryA : this.countryB;
+        this.correctAnswer = this.countryList[this.__getRandomCountry()];
       }
+
       __getRandomCountry() {
         return Math.floor(Math.random() * (this.countryList.length));
       }
+
       _restart() {
         window.location.reload();
       }
